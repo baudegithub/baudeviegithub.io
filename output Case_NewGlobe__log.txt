@@ -1,0 +1,517 @@
+-----------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\HP\CASE_STUDY_NEWGLOBE/output Case_NewGlobe__log.txt
+  log type:  text
+ opened on:  24 Sep 2024, 14:14:16
+
+. 
+. 
+. 
+. ***-----------------------------------------------------------------------------
+. 
+.   ********************************************************************************
+. *** ANSWERS TO QUESTIONS
+. ********************************************************************************
+. 
+. clear
+
+. // Let's imoport the student level conataining all the informations data 
+. 
+.  use "${raw_data}/pupil_info1.dta"
+
+.  
+.  /**********              *********/
+.  
+.  ***2- Key performance construction
+.  
+.   *** Let's construct the Key performance indicator  ( percent of pupil present ) 
+.  gen KPI_1 =  present_records/attendance_records
+
+.  
+.  
+.  
+.  /**********              *********/
+.   
+.  ***3- Descriptive analysis
+.  
+.   *** let's compute the average pupil attendance per school
+.  collapse (mean) KPI_1,  by(school_id)
+
+.  
+.  **** let compute the average  fluency score  across grades 
+.  clear
+
+.  use "${raw_data}/pupil_info1.dta"
+
+.  collapse (mean) score_Fluency , by(pupil_grade)
+
+.  ***** let compute the average  fluency score  across  regions
+.   
+.   clear  
+
+.   use "${raw_data}/pupil_info1.dta"
+
+.  collapse (mean) score_Fluency , by(region)
+
+.  
+.  
+.   
+.   
+.    /**********              *********/
+.   clear
+
+.   use "${raw_data}/pupil_info1.dta"
+
+.  
+.   **** let's construct the dummy which measure performance in fluency score of the pupils
+.   *** it takes 1 when the pupil scores at 10 or lower and o otherwise
+. gen performance_score = score_Fluency <= 10
+
+. 
+. *** this code below gives us  a data where  each pupil has a unique row with their performance  in fluency score
+. collapse  (mean)   performance_score , by(pupil_id  pupil_grade)
+
+. 
+. ***** let's get the share of pupils that perform at 10 or lower across grades
+. collapse (mean) performance_score , by(pupil_grade)
+
+. ***** let's  create the bar chart with showing the share of pupil with fluency score 10 or lower across the 5 grades 
+. graph bar performance_score, over(pupil_grade) title(" share of pupils with fluency score under 10 across grades")  ytitle(
+> "share of pupils") bar(1 , color(blue))
+
+. 
+. 
+. 
+.  /**********              *********/
+.  clear
+
+.   use "${raw_data}/pupil_info1.dta"
+
+.   gen performance_score = score_Fluency <= 10
+
+.  ***** This code below allow us to only pupils in grade 3
+.  
+. keep if   pupil_grade== "Grade 3"
+(50,438 observations deleted)
+
+. 
+. *** We now want to see   share of  grade 3 pupils thtat score 10 or lower across schools
+. collapse (mean) performance_score , by(school_id)
+
+. *** we want find now  which  schools have the highest and lowest share of grade3 pupils 
+. list school_id performance_score
+
+     +---------------------+
+     | school~d   perfor~e |
+     |---------------------|
+  1. |      416       .125 |
+  2. |      792          0 |
+  3. |     5502          0 |
+  4. |     7956          0 |
+  5. |     8084   .1153846 |
+     |---------------------|
+  6. |     9342          0 |
+  7. |    10904          0 |
+  8. |    14475          0 |
+  9. |    16230          0 |
+ 10. |    17404          0 |
+     |---------------------|
+ 11. |    20972          0 |
+ 12. |    25263   .0357143 |
+ 13. |    25434          0 |
+ 14. |    28112          0 |
+ 15. |    28860   .0645161 |
+     |---------------------|
+ 16. |    30690   .0434783 |
+ 17. |    32940          0 |
+ 18. |    34092          0 |
+ 19. |    34675          0 |
+ 20. |    35175          0 |
+     |---------------------|
+ 21. |    36848          0 |
+ 22. |    39078   .0322581 |
+ 23. |    40580          0 |
+ 24. |    42240          0 |
+ 25. |    46528    .173913 |
+     |---------------------|
+ 26. |    46684          0 |
+ 27. |    47025   .0285714 |
+ 28. |    49404     .03125 |
+ 29. |    49698   .0555556 |
+ 30. |    53103          0 |
+     |---------------------|
+ 31. |    55770          0 |
+ 32. |    56406          0 |
+ 33. |    56803   .0222222 |
+ 34. |    65520          0 |
+ 35. |    73360          0 |
+     |---------------------|
+ 36. |    75848        .05 |
+ 37. |    83388          0 |
+ 38. |    88122          0 |
+ 39. |   108210          0 |
+ 40. |   112034          0 |
+     |---------------------|
+ 41. |   118338          0 |
+ 42. |   123695          0 |
+ 43. |   136992   .0869565 |
+ 44. |   155343          0 |
+ 45. |   156096          0 |
+     |---------------------|
+ 46. |   165300          0 |
+ 47. |   166905          0 |
+ 48. |   168804          0 |
+ 49. |   173720          0 |
+ 50. |   175100          0 |
+     |---------------------|
+ 51. |   196896          0 |
+ 52. |   201569          0 |
+ 53. |   206948   .1162791 |
+ 54. |   218688   .1428571 |
+ 55. |   223545          0 |
+     |---------------------|
+ 56. |   223941   .3170732 |
+ 57. |   226128          0 |
+ 58. |   230373          0 |
+ 59. |   239870          0 |
+ 60. |   257904          0 |
+     |---------------------|
+ 61. |   259688          0 |
+ 62. |   264915          0 |
+ 63. |   273888          0 |
+ 64. |   283971          0 |
+ 65. |   286984          0 |
+     |---------------------|
+ 66. |   293664          0 |
+ 67. |   297076          0 |
+ 68. |   304425   .0333333 |
+ 69. |   314160   .0227273 |
+ 70. |   323877          0 |
+     |---------------------|
+ 71. |   324884          0 |
+ 72. |   326599          0 |
+ 73. |   329344          0 |
+ 74. |   356775          0 |
+ 75. |   359640          0 |
+     |---------------------|
+ 76. |   363280          0 |
+ 77. |   363825          0 |
+ 78. |   388800          0 |
+ 79. |   401280          0 |
+ 80. |   401898          0 |
+     |---------------------|
+ 81. |   403506          0 |
+ 82. |   406350          0 |
+ 83. |   419336    .030303 |
+ 84. |   421680          0 |
+ 85. |   423500          0 |
+     |---------------------|
+ 86. |   425124          0 |
+ 87. |   447445          0 |
+ 88. |   489918          0 |
+ 89. |   491645   .1428571 |
+ 90. |   501872          0 |
+     |---------------------|
+ 91. |   563568          0 |
+ 92. |   565811          0 |
+ 93. |   575416          0 |
+ 94. |   581940          0 |
+ 95. |   583940   .1333333 |
+     |---------------------|
+ 96. |   592421   .0322581 |
+ 97. |   601798          0 |
+ 98. |   607904   .1666667 |
+ 99. |   609982          0 |
+100. |   616880          0 |
+     |---------------------|
+101. |   628537          0 |
+102. |   646056          0 |
+103. |   687400      .0625 |
+104. |   759451          0 |
+105. |   822894          0 |
+     |---------------------|
+106. |   858450          0 |
+107. |   864156          0 |
+108. |   909600          0 |
+109. |   958934          0 |
+110. |   963352          0 |
+     |---------------------|
+111. |   991980          0 |
+     +---------------------+
+
+. 
+. 
+. 
+. 
+. 
+. **********              *********/
+.  clear
+
+.   use "${raw_data}/pupil_info1.dta"
+
+.   gen performance_score = score_Fluency <= 10
+
+. 
+. 
+. ***** 4-Impact evaluation 
+. reg score_Fluency tutoring_program
+
+      Source |       SS           df       MS      Number of obs   =    59,606
+-------------+----------------------------------   F(1, 59604)     =   3330.88
+       Model |    16342705         1    16342705   Prob > F        =    0.0000
+    Residual |   292442610    59,604  4906.42592   R-squared       =    0.0529
+-------------+----------------------------------   Adj R-squared   =    0.0529
+       Total |   308785315    59,605  5180.52706   Root MSE        =    70.046
+
+----------------------------------------------------------------------------------
+   score_Fluency |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-----------------+----------------------------------------------------------------
+tutoring_program |   33.12207   .5739025    57.71   0.000     31.99722    34.24692
+           _cons |   96.89325   .4094501   236.64   0.000     96.09073    97.69578
+----------------------------------------------------------------------------------
+
+.  reg score_Math tutoring_program
+
+      Source |       SS           df       MS      Number of obs   =    60,162
+-------------+----------------------------------   F(1, 60160)     =    461.88
+       Model |  22.6518943         1  22.6518943   Prob > F        =    0.0000
+    Residual |  2950.43554    60,160  .049043144   R-squared       =    0.0076
+-------------+----------------------------------   Adj R-squared   =    0.0076
+       Total |  2973.08744    60,161   .04941885   Root MSE        =    .22146
+
+----------------------------------------------------------------------------------
+      score_Math |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-----------------+----------------------------------------------------------------
+tutoring_program |   .0388092   .0018058    21.49   0.000     .0352698    .0423485
+           _cons |   .7049401   .0012819   549.94   0.000     .7024276    .7074525
+----------------------------------------------------------------------------------
+
+.    reg score_Kiswahili tutoring_program
+
+      Source |       SS           df       MS      Number of obs   =    60,231
+-------------+----------------------------------   F(1, 60229)     =   4784.35
+       Model |   246.68958         1   246.68958   Prob > F        =    0.0000
+    Residual |  3105.51558    60,229  .051561799   R-squared       =    0.0736
+-------------+----------------------------------   Adj R-squared   =    0.0736
+       Total |  3352.20516    60,230  .055656735   Root MSE        =    .22707
+
+----------------------------------------------------------------------------------
+ score_Kiswahili |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-----------------+----------------------------------------------------------------
+tutoring_program |   .1279999   .0018505    69.17   0.000     .1243728     .131627
+           _cons |   .6786026   .0013138   516.51   0.000     .6760275    .6811777
+----------------------------------------------------------------------------------
+
+.    reg KPI_1  tutoring_program
+variable KPI_1 not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. des
+
+Contains data from C:\Users\HP\CASE_STUDY_NEWGLOBE/Datasets/pupil_info1.dta
+  obs:        63,215                          
+ vars:            15                          21 Sep 2024 11:08
+ size:     7,712,230                          
+-----------------------------------------------------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-----------------------------------------------------------------------------------------------------------------------------
+pupil_id        double  %9.0g                 Unique student ID
+teacher_id      double  %9.0g                 group(StaffID TeacherAssignedtoClass)
+school_id       double  %9.0g                 Unique school ID
+grade           str7    %14s                  Teacher Assigned to Class
+attendance_re~s double  %10.0g                Number of records marked
+present_records double  %10.0g                Number of days present
+pupil_grade     str7    %14s                  Grade student is currently enrolled in
+score_Fluency   double  %9.0g                 Score obtained for this assessment
+score_Kiswahili double  %9.0g                 Score obtained for this assessment
+score_Math      double  %9.0g                 Score obtained for this assessment
+region          str13   %13s                  Region
+province        str11   %11s                  Province
+tutoring_prog~m double  %9.0g      tutoring_program
+                                              Was this school part of the Tutoring Buddies program?
+lesson_comple~e double  %10.0g                % Lessons Completed
+performance_s~e float   %9.0g                 
+-----------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
+
+. do "C:\Users\HP\AppData\Local\Temp\STD20a8_000000.tmp"
+
+. reg score_Fluency tutoring_program lesson_comletion_rate
+variable lesson_comletion_rate not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\HP\AppData\Local\Temp\STD20a8_000000.tmp"
+
+. reg score_Fluency tutoring_program lesson_completion_rate
+
+      Source |       SS           df       MS      Number of obs   =    59,606
+-------------+----------------------------------   F(2, 59603)     =   1665.46
+       Model |  16343128.7         2  8171564.34   Prob > F        =    0.0000
+    Residual |   292442187    59,603  4906.50113   R-squared       =    0.0529
+-------------+----------------------------------   Adj R-squared   =    0.0529
+       Total |   308785315    59,605  5180.52706   Root MSE        =    70.046
+
+----------------------------------------------------------------------------------------
+         score_Fluency |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-----------------------+----------------------------------------------------------------
+      tutoring_program |   33.12293   .5739144    57.71   0.000     31.99806    34.24781
+lesson_completion_rate |  -.3757577   1.278779    -0.29   0.769    -2.882169    2.130654
+                 _cons |   97.12143   .8778734   110.63   0.000      95.4008    98.84207
+----------------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\HP\AppData\Local\Temp\STD20a8_000000.tmp"
+
+.    reg lesson_completion_rate tutoring_program
+
+      Source |       SS           df       MS      Number of obs   =    63,215
+-------------+----------------------------------   F(1, 63213)     =      1.36
+       Model |  .068430048         1  .068430048   Prob > F        =    0.2428
+    Residual |  3170.26372    63,213  .050152084   R-squared       =    0.0000
+-------------+----------------------------------   Adj R-squared   =    0.0000
+       Total |  3170.33215    63,214  .050152374   Root MSE        =    .22395
+
+----------------------------------------------------------------------------------
+lesson_complet~e |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-----------------+----------------------------------------------------------------
+tutoring_program |   .0020809   .0017814     1.17   0.243    -.0014107    .0055725
+           _cons |   .6058858   .0012618   480.18   0.000     .6034127    .6083589
+----------------------------------------------------------------------------------
+
+.    
+.     
+. reg score_Fluency tutoring_program lesson_completion_rate
+
+      Source |       SS           df       MS      Number of obs   =    59,606
+-------------+----------------------------------   F(2, 59603)     =   1665.46
+       Model |  16343128.7         2  8171564.34   Prob > F        =    0.0000
+    Residual |   292442187    59,603  4906.50113   R-squared       =    0.0529
+-------------+----------------------------------   Adj R-squared   =    0.0529
+       Total |   308785315    59,605  5180.52706   Root MSE        =    70.046
+
+----------------------------------------------------------------------------------------
+         score_Fluency |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-----------------------+----------------------------------------------------------------
+      tutoring_program |   33.12293   .5739144    57.71   0.000     31.99806    34.24781
+lesson_completion_rate |  -.3757577   1.278779    -0.29   0.769    -2.882169    2.130654
+                 _cons |   97.12143   .8778734   110.63   0.000      95.4008    98.84207
+----------------------------------------------------------------------------------------
+
+.  reg score_Math tutoring_program lesson_completion_rate
+
+      Source |       SS           df       MS      Number of obs   =    60,162
+-------------+----------------------------------   F(2, 60159)     =    307.52
+       Model |  30.0877656         2  15.0438828   Prob > F        =    0.0000
+    Residual |  2942.99967    60,159  .048920356   R-squared       =    0.0101
+-------------+----------------------------------   Adj R-squared   =    0.0101
+       Total |  2973.08744    60,161   .04941885   Root MSE        =    .22118
+
+----------------------------------------------------------------------------------------
+            score_Math |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-----------------------+----------------------------------------------------------------
+      tutoring_program |   .0387032   .0018036    21.46   0.000     .0351682    .0422382
+lesson_completion_rate |   .0496023   .0040233    12.33   0.000     .0417167     .057488
+                 _cons |   .6747987   .0027597   244.52   0.000     .6693896    .6802077
+----------------------------------------------------------------------------------------
+
+.    reg score_Kiswahili tutoring_program lesson_completion_rate
+
+      Source |       SS           df       MS      Number of obs   =    60,231
+-------------+----------------------------------   F(2, 60228)     =   2452.52
+       Model |  252.447773         2  126.223887   Prob > F        =    0.0000
+    Residual |  3099.75739    60,228  .051467048   R-squared       =    0.0753
+-------------+----------------------------------   Adj R-squared   =    0.0753
+       Total |  3352.20516    60,230  .055656735   Root MSE        =    .22686
+
+----------------------------------------------------------------------------------------
+       score_Kiswahili |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-----------------------+----------------------------------------------------------------
+      tutoring_program |   .1279721   .0018488    69.22   0.000     .1243484    .1315959
+lesson_completion_rate |   .0436485   .0041266    10.58   0.000     .0355604    .0517366
+                 _cons |   .6520815   .0028301   230.41   0.000     .6465344    .6576286
+----------------------------------------------------------------------------------------
+
+.    
+. 
+end of do-file
+
+. do "C:\Users\HP\AppData\Local\Temp\STD20a8_000000.tmp"
+
+.  clear
+
+.   use "${constructed_data}/school_randomization.dta"
+file /school_randomization.dta not found
+r(601);
+
+end of do-file
+
+r(601);
+
+. do "C:\Users\HP\AppData\Local\Temp\STD20a8_000000.tmp"
+
+.  clear
+
+.   use "${construct_data}/school_randomization.dta"
+file C:\Users\HP\CASE_STUDY_NEWGLOBE/constructed_data/school_randomization.dta not found
+r(601);
+
+end of do-file
+
+r(601);
+
+. do "C:\Users\HP\AppData\Local\Temp\STD20a8_000000.tmp"
+
+.  clear
+
+.   use "${construct_data}/school_randomization.dta"
+file C:\Users\HP\CASE_STUDY_NEWGLOBE/constructed_data/school_randomization.dta not found
+r(601);
+
+end of do-file
+
+r(601);
+
+. do "C:\Users\HP\AppData\Local\Temp\STD20a8_000000.tmp"
+
+.  clear
+
+.   use "${raw_data}/pupil_info1.dta"
+
+. 
+end of do-file
+
+. do "C:\Users\HP\AppData\Local\Temp\STD20a8_000000.tmp"
+
+.  clear
+
+.   use "${raw_data}/school_randomization.dta"
+file C:\Users\HP\CASE_STUDY_NEWGLOBE/Datasets/school_randomization.dta not found
+r(601);
+
+end of do-file
+
+r(601);
+
+. do "C:\Users\HP\AppData\Local\Temp\STD20a8_000000.tmp"
+
+.   use "${raw_data}/school_randomization.dta"
+file C:\Users\HP\CASE_STUDY_NEWGLOBE/Datasets/school_randomization.dta not found
+r(601);
+
+end of do-file
+
+r(601);
+
+. exit, clear
